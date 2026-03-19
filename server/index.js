@@ -12,11 +12,13 @@ app.use(express.json()); // Middleware to parse JSON bodies - req.body
 //create a game
 app.post ('/addGame', async (req, res) => {
   try {
+    console.log("Received request to add game:", req.body);
     const { name, min_players, max_players, play_time } = req.body;
     const result = await pool.query(
       'INSERT INTO games (name, min_players, max_players, play_time) VALUES ($1, $2, $3, $4) RETURNING *',
       [name, min_players, max_players, play_time]
     );
+    console.log(`Game added: ${result.rows[0].name}`);
     res.status(201).json(result.rows[0]);
   } catch (err) {
     console.error(err);
