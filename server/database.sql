@@ -1,3 +1,4 @@
+DROP DATABASE IF EXISTS ttgcollector_DEV;
 CREATE DATABASE ttgcollector_DEV;
 
 CREATE TABLE games (
