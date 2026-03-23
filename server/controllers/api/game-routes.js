@@ -1,11 +1,7 @@
 const router = require("express").Router();
-const { getGames, addGame } = require("../game-controller");
+const homeRoutes = require("../homeRoutes");
 
-// Define routes for games
-router.route("/").get(getGames);
-//router.route("/:id").get(getGameById);
-router.route("/").post(addGame);
-//router.route("/:id").put(updateGame);
-//router.route("/:id").delete(deleteGame);
+// Use the homeRoutes router for game endpoints
+router.use("/", homeRoutes);
 
 module.exports = router;

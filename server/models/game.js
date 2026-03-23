@@ -1,5 +1,5 @@
-const {Model, DataTypes} = require('sequelize');
-const sequelize = require('../config/connection');
+const { Model, DataTypes } = require("sequelize");
+const sequelize = require("../config/connection");
 
 class Game extends Model {}
 
@@ -9,31 +9,32 @@ Game.init(
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true,
-      autoIncrement: true
+      autoIncrement: true,
     },
     name: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
     },
     min_players: {
       type: DataTypes.INTEGER,
-      allowNull: false
+      allowNull: false,
     },
     max_players: {
       type: DataTypes.INTEGER,
-      allowNull: false
+      allowNull: false,
     },
     play_time: {
       type: DataTypes.INTEGER,
-      allowNull: false
-    }
+      allowNull: false,
+    },
   },
   {
     sequelize,
     timestamps: false,
     freezeTableName: true,
-    modelName: 'game'
-  }
+    modelName: "game",
+    tableName: "games", 
+  },
 );
 
 module.exports = Game;
