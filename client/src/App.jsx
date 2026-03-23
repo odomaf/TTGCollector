@@ -9,12 +9,14 @@ import { Modal } from "./components/Modal";
 function App() {
   return (
     <div className="App">
-      <h1>Welcome to TTG Collector</h1>
+      <div className="container bg-success text-white p-3 mb-3">
+        <h1>Welcome to TTG Collector</h1>
+      </div>
 
-      <div className="mb-3">
+      <div className="mb-3 container">
         <button
           type="button"
-          className="btn btn-primary"
+          className="btn btn-success"
           data-bs-toggle="modal"
           data-bs-target="#addGameModal"
         >
@@ -22,7 +24,9 @@ function App() {
         </button>
       </div>
 
-      <Games />
+      <div className="container">
+        <Games />
+      </div>
 
       <Modal />
     </div>
