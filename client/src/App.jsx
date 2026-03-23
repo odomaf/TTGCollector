@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import "./App.css";
 
 //components
@@ -7,6 +7,25 @@ import Games from "./components/Games";
 import { Modal } from "./components/Modal";
 
 function App() {
+  const [games, setGames] = useState([]);
+
+  const fetchGames = async () => {
+    try {
+      const response = await fetch('/api/');
+      if (!response.ok) {
+        throw new Error(`API error: ${response.status}`);
+      }
+      const data = await response.json();
+      setGames(data);
+    } catch (err) {
+      console.error('Error fetching games:', err);
+    }
+  };
+
+  useEffect(() => {
+    fetchGames();
+  }, []);
+
   return (
     <div className="App">
       <div className="container bg-success text-white p-3 mb-3">
@@ -25,10 +44,10 @@ function App() {
       </div>
 
       <div className="container">
-        <Games />
+        <Games games={games} />
       </div>
 
-      <Modal />
+      <Modal onGameAdded={fetchGames} />
     </div>
   );
 }

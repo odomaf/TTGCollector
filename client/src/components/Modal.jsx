@@ -1,13 +1,21 @@
 import React from "react";
 import { AddGame } from "./AddGame";
 
-export const Modal = () => {
+export const Modal = ({ onGameAdded }) => {
   return (
-    <div className="modal fade" id="addGameModal" tabIndex="-1" aria-labelledby="addGameModalLabel" aria-hidden="true">
+    <div
+      className="modal fade"
+      id="addGameModal"
+      tabIndex="-1"
+      aria-labelledby="addGameModalLabel"
+      aria-hidden="true"
+    >
       <div className="modal-dialog">
         <div className="modal-content">
           <div className="modal-header">
-            <h5 className="modal-title" id="addGameModalLabel">Add a New Game</h5>
+            <h5 className="modal-title" id="addGameModalLabel">
+              Add a New Game
+            </h5>
             <button
               type="button"
               className="btn-close"
@@ -16,18 +24,22 @@ export const Modal = () => {
             ></button>
           </div>
           <div className="modal-body">
-            <AddGame />
+            <AddGame onGameAdded={onGameAdded} />
           </div>
           <div className="modal-footer">
+            <button
+              type="submit"
+              className="btn btn-success"
+              form="addGameForm"
+            >
+              Add Game
+            </button>
             <button
               type="button"
               className="btn btn-secondary"
               data-bs-dismiss="modal"
             >
               Close
-            </button>
-            <button type="button" className="btn btn-primary">
-              Save changes
             </button>
           </div>
         </div>

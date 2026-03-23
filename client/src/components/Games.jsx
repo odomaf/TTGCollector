@@ -1,30 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 
-export default function Games() {
-  const [games, setGames] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    // Fetch the list of games from the API
-    const fetchGames = async () => {
-      try {
-        const response = await fetch("/api/");
-        if (!response.ok) {
-          throw new Error(`API error: ${response.status}`);
-        }
-        const data = await response.json();
-        setGames(data);
-        setLoading(false);
-      } catch (err) {
-        console.error("Error fetching games:", err);
-        setError(err);
-        setLoading(false);
-      }
-    };
-
-    fetchGames();
-  }, []);
+export default function Games({ games }) {
+  const loading = false; // No loading since data comes from parent
+  const error = null;
 
   if (loading) {
     return <div>Loading games...</div>;

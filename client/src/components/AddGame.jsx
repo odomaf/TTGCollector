@@ -1,7 +1,7 @@
 import React from "react";
 import { useState } from "react";
 
-export const AddGame = () => {
+export const AddGame = ({ onGameAdded }) => {
   const [formState, setFormState] = useState({
     gameName: "",
     min_players: 0,
@@ -35,12 +35,20 @@ export const AddGame = () => {
           play_time: play_time,
         });
         console.log("Request body:", body);
-        const response = await fetch("/addGame", {
+        const response = await fetch("/api/addGame", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: body,
         });
-        //const data = await response.json();
+        if (response.ok) {
+          // Close modal
+          const modal = bootstrap.Modal.getInstance(
+            document.getElementById("addGameModal"),
+          );
+          modal.hide();
+          // Refresh games list
+          onGameAdded();
+        }
         console.log("Game added:", response);
       } catch (error) {
         console.error("Error adding game:", error);
@@ -50,9 +58,9 @@ export const AddGame = () => {
 
   return (
     <div className="row g-3 align-items-center container">
-      <form className="row g-3 align-items-center" onSubmit={handleSubmit}>
+      <form id="addGameForm" onSubmit={handleSubmit}>
         <div className="col-auto">
-          <label htmlFor="gameName" className="col-form-label">
+          <label htmlFor="gameName" className="form-label">
             Game Name
           </label>
         </div>
@@ -66,7 +74,7 @@ export const AddGame = () => {
           />
         </div>
         <div className="col-auto">
-          <label htmlFor="min_players" className="col-form-label">
+          <label htmlFor="min_players" className="form-label">
             Min Players
           </label>
         </div>
@@ -80,7 +88,7 @@ export const AddGame = () => {
           />
         </div>
         <div className="col-auto">
-          <label htmlFor="max_players" className="col-form-label">
+          <label htmlFor="max_players" className="form-label">
             Max Players
           </label>
         </div>
@@ -94,7 +102,7 @@ export const AddGame = () => {
           />
         </div>
         <div className="col-auto">
-          <label htmlFor="play_time" className="col-form-label">
+          <label htmlFor="play_time" className="form-label">
             Play Time (minutes)
           </label>
         </div>
@@ -107,10 +115,6 @@ export const AddGame = () => {
             onChange={handleChange}
           />
         </div>
-
-        <button type="submit" className="btn btn-primary mb-3">
-          Add Game
-        </button>
       </form>
     </div>
   );
