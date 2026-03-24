@@ -1,7 +1,7 @@
 const router = require("express").Router();
-//const { game } = require('../models');
+const { Op } = require("sequelize");
 const sequelize = require("../config/connection");
-const { Game } = require("../models");
+const { Game, Category, Mechanic } = require("../models");
 
 // POST /addGame
 router.post("/addGame", async (req, res) => {
@@ -12,12 +12,61 @@ router.post("/addGame", async (req, res) => {
         name: req.body.name,
         min_players: req.body.min_players,
         max_players: req.body.max_players,
-        play_time: req.body.play_time,
+        thumbnail: req.body.thumbnail,
+        description: req.body.description,
+        published: req.body.published,
+        bgg_id: req.body.bgg_id,
+        minplaytime: req.body.minplaytime,
+        maxplaytime: req.body.maxplaytime,
+        minage: req.body.minage,
       },
       { transaction },
     );
+
+    const categoryNames = Array.isArray(req.body.categories)
+      ? req.body.categories.filter(Boolean)
+      : [];
+    const mechanicNames = Array.isArray(req.body.mechanics)
+      ? req.body.mechanics.filter(Boolean)
+      : [];
+
+    if (categoryNames.length > 0) {
+      const matchedCategories = await Category.findAll({
+        where: {
+          category: {
+            [Op.in]: categoryNames,
+          },
+        },
+        transaction,
+      });
+
+      if (matchedCategories.length > 0) {
+        await newGame.addCategories(matchedCategories, { transaction });
+      }
+    }
+
+    if (mechanicNames.length > 0) {
+      const matchedMechanics = await Mechanic.findAll({
+        where: {
+          mechanic: {
+            [Op.in]: mechanicNames,
+          },
+        },
+        transaction,
+      });
+
+      if (matchedMechanics.length > 0) {
+        await newGame.addMechanics(matchedMechanics, { transaction });
+      }
+    }
+
+    const createdGame = await Game.findByPk(newGame.id, {
+      include: [Category, Mechanic],
+      transaction,
+    });
+
     await transaction.commit();
-    res.status(201).json(newGame);
+    res.status(201).json(createdGame);
     console.log(`Game added: ${newGame.name}`);
   } catch (err) {
     console.error(err);
