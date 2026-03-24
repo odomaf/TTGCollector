@@ -6,5 +6,37 @@ CREATE TABLE games (
     name VARCHAR(255) NOT NULL UNIQUE,
     min_players INTEGER NOT NULL,
     max_players INTEGER NOT NULL,
-    play_time INTEGER NOT NULL
+    thumbnail TEXT,
+    description TEXT,
+    published TEXT,
+    bgg_id INTEGER UNIQUE,
+    minplaytime INTEGER,
+    maxplaytime INTEGER,
+    minage INTEGER,
+);
+
+CREATE TABLE categories (
+    id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    category TEXT NOT NULL UNIQUE
+);
+
+CREATE TABLE mechanics (
+    id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    mechanic TEXT NOT NULL UNIQUE
+);
+
+CREATE TABLE game_categories (
+    game_id INTEGER NOT NULL,
+    category_id INTEGER NOT NULL,
+    PRIMARY KEY (game_id, category_id),
+    FOREIGN KEY (game_id) REFERENCES games(id) ON DELETE CASCADE,
+    FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE CASCADE
+);
+
+CREATE TABLE game_mechanics (
+    game_id INTEGER NOT NULL,
+    mechanic_id INTEGER NOT NULL,
+    PRIMARY KEY (game_id, mechanic_id),
+    FOREIGN KEY (game_id) REFERENCES games(id) ON DELETE CASCADE,
+    FOREIGN KEY (mechanic_id) REFERENCES mechanics(id) ON DELETE CASCADE
 );

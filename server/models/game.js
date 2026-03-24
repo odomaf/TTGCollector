@@ -23,9 +23,27 @@ Game.init(
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    play_time: {
+      thumbnail: {
+      type: DataTypes.TEXT,
+    },
+    description: {
+      type: DataTypes.TEXT,
+    },
+    published: {
+      type: DataTypes.TEXT,
+    },
+    bgg_id: {
       type: DataTypes.INTEGER,
-      allowNull: false,
+      unique: true,
+    },
+    minplaytime: {
+      type: DataTypes.INTEGER,
+    },
+    maxplaytime: {
+      type: DataTypes.INTEGER,
+    },
+    minage: {
+      type: DataTypes.INTEGER,
     },
   },
   {
@@ -36,5 +54,7 @@ Game.init(
     tableName: "games", 
   },
 );
+
+// Associations are defined in index.js
 
 module.exports = Game;
