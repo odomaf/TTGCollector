@@ -5,6 +5,12 @@ require("dotenv").config();
 
 router.get("/search/:query", async (req, res) => {
   try {
+    const offset = Math.max(parseInt(req.query.offset || "0", 10), 0);
+    const limit = Math.min(
+      Math.max(parseInt(req.query.limit || "20", 10), 1),
+      100,
+    );
+
     const response = await axios.get(
       `https://boardgamegeek.com/xmlapi2/search?query=${encodeURIComponent(req.params.query)}&type=boardgame`,
       {
@@ -28,18 +34,49 @@ router.get("/search/:query", async (req, res) => {
 
         const items = result?.items?.item;
         if (!items) {
-          return res.json([]);
+          return res.json({
+            results: [],
+            total: 0,
+            offset,
+            limit,
+            hasMore: false,
+            nextOffset: offset,
+          });
         }
 
         const itemArray = Array.isArray(items) ? items : [items];
-        const ids = itemArray
-          .sort((a, b) => {
-            const yearA = parseInt(a.yearpublished?.$?.value) || 0;
-            const yearB = parseInt(b.yearpublished?.$?.value) || 0;
-            return yearB - yearA;
-          })
-          .slice(0, 20)
-          .map((item) => item.$.id);
+
+        const getSearchName = (item) => {
+          const names = Array.isArray(item.name)
+            ? item.name
+            : item.name
+              ? [item.name]
+              : [];
+          return (
+            names.find((n) => n.$?.type === "primary")?.$?.value ||
+            names[0]?.$?.value ||
+            ""
+          );
+        };
+
+        const sortedItems = [...itemArray].sort((a, b) =>
+          getSearchName(a).localeCompare(getSearchName(b)),
+        );
+
+        const total = sortedItems.length;
+        const pagedItems = sortedItems.slice(offset, offset + limit);
+        const ids = pagedItems.map((item) => item.$.id);
+
+        if (ids.length === 0) {
+          return res.json({
+            results: [],
+            total,
+            offset,
+            limit,
+            hasMore: false,
+            nextOffset: offset,
+          });
+        }
 
         // Fetch details for all ids in one call
         const detailsResponse = await axios.get(
@@ -103,7 +140,20 @@ router.get("/search/:query", async (req, res) => {
               };
             });
 
-            res.json(mapped);
+            const byId = new Map(mapped.map((m) => [String(m.id), m]));
+            const orderedResults = ids
+              .map((id) => byId.get(String(id)))
+              .filter(Boolean);
+
+            const nextOffset = offset + limit;
+            res.json({
+              results: orderedResults,
+              total,
+              offset,
+              limit,
+              hasMore: nextOffset < total,
+              nextOffset,
+            });
           },
         );
       },
