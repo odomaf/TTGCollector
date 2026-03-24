@@ -11,6 +11,9 @@ export const AddGame = ({ onGameAdded }) => {
   });
 
   const { gameName, min_players, max_players, play_time } = formState;
+  const [searchResults, setSearchResults] = useState([]);
+  const [searching, setSearching] = useState(false);
+  const [searchError, setSearchError] = useState(null);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -43,7 +46,7 @@ export const AddGame = ({ onGameAdded }) => {
         });
         if (response.ok) {
           // Close modal
-          document.querySelector('#addGameModal .btn-close').click();
+          document.querySelector("#addGameModal .btn-close").click();
           // Refresh games list
           onGameAdded();
         }
@@ -73,10 +76,70 @@ export const AddGame = ({ onGameAdded }) => {
             type="text"
             id="gameName"
             name="gameName"
+            value={gameName}
             className="form-control"
             onChange={handleChange}
           />
         </div>
+
+        <div className="col-auto">
+          <button
+            type="button"
+            className="btn btn-info mb-3"
+            disabled={!gameName || searching}
+            onClick={async () => {
+              setSearching(true);
+              setSearchError(null);
+              try {
+                const response = await fetch(
+                  `/api/bgg/search/${encodeURIComponent(gameName)}`,
+                );
+                if (!response.ok) {
+                  throw new Error(`BGG search failed: ${response.status}`);
+                }
+                const results = await response.json();
+                setSearchResults(results);
+              } catch (error) {
+                console.error("BGG search error:", error);
+                setSearchError(error.message);
+              } finally {
+                setSearching(false);
+              }
+            }}
+          >
+            {searching ? "Searching..." : "Search BoardGameGeek"}
+          </button>
+        </div>
+
+        {searchError && (
+          <div className="col-12">
+            <div className="alert alert-danger">{searchError}</div>
+          </div>
+        )}
+
+        {searchResults.length > 0 && (
+          <div className="col-12">
+            <h6>Search results</h6>
+            <ul className="list-group">
+              {searchResults.slice(0, 5).map((item) => (
+                <li
+                  key={item.id}
+                  className="list-group-item list-group-item-action"
+                  style={{ cursor: "pointer" }}
+                  onClick={() =>
+                    setFormState((prev) => ({
+                      ...prev,
+                      gameName: item.name,
+                    }))
+                  }
+                >
+                  {item.name} {item.year ? `(${item.year})` : ""}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
         <div className="col-auto">
           <label htmlFor="min_players" className="form-label">
             Min Players
