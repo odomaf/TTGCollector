@@ -1,5 +1,6 @@
 import React from "react";
 import { useState } from "react";
+import { Modal } from "bootstrap";
 
 export const AddGame = ({ onGameAdded }) => {
   const [formState, setFormState] = useState({
@@ -42,10 +43,7 @@ export const AddGame = ({ onGameAdded }) => {
         });
         if (response.ok) {
           // Close modal
-          const modal = bootstrap.Modal.getInstance(
-            document.getElementById("addGameModal"),
-          );
-          modal.hide();
+          document.querySelector('#addGameModal .btn-close').click();
           // Refresh games list
           onGameAdded();
         }
@@ -54,6 +52,12 @@ export const AddGame = ({ onGameAdded }) => {
         console.error("Error adding game:", error);
       }
     }
+  };
+
+  const searchBGG = async (query) => {
+    const response = await fetch(`/api/bgg/search/${query}`);
+    const data = await response.json();
+    // Use data...
   };
 
   return (
