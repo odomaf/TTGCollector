@@ -22,7 +22,8 @@ Category.init(
     timestamps: false,
     freezeTableName: true,
     modelName: "category",
-  }
+    tableName: "categories",
+  },
 );
 
 // Associations are defined in index.js

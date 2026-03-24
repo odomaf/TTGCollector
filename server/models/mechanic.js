@@ -22,7 +22,8 @@ Mechanic.init(
     timestamps: false,
     freezeTableName: true,
     modelName: "mechanic",
-  }
+    tableName: "mechanics",
+  },
 );
 
 // Associations are defined in index.js
