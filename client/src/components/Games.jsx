@@ -12,22 +12,51 @@ export default function Games({ games }) {
   }
   return (
     <div>
-      <h2>Your Game Collection</h2>
       {games.length === 0 ? (
         <p>No games found.</p>
       ) : (
-        <div className="row">
+        <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 games-grid">
           {games.map((game) => (
-            <div key={game.id} className="col-md-4 mb-3">
-              <div className="card">
+            <div key={game.id} className="col mb-0">
+              <div className="card game-card shadow">
+                {game.thumbnail ? (
+                  <img
+                    src={game.thumbnail}
+                    className="card-img-top game-card-img-top"
+                    alt={game.name}
+                  />
+                ) : (
+                  <div className="card-img-top game-card-img-top bg-light border d-flex align-items-center justify-content-center">
+                    <span className="text-muted">No image</span>
+                  </div>
+                )}
                 <div className="card-body">
                   <h5 className="card-title">{game.name}</h5>
                   <p className="card-text">
-                    <strong>Players:</strong> {game.min_players} -{" "}
-                    {game.max_players}
+                    Players: {game.min_players ?? "-"}
+                    {game.min_players !== game.max_players
+                      ? `-${game.max_players ?? "-"}`
+                      : ""}
                   </p>
                   <p className="card-text">
-                    <strong>Play Time:</strong> {game.play_time} minutes
+                    Play Time: {game.minplaytime ?? "-"}
+                    {game.minplaytime !== game.maxplaytime
+                      ? `-${game.maxplaytime ?? "-"}`
+                      : ""}
+                  </p>
+                  <p className="card-text">Min Age: {game.minage ?? "-"}+</p>
+                  <p className="card-text mb-0">
+                    {game.bgg_id ? (
+                      <a
+                        href={`https://boardgamegeek.com/boardgame/${game.bgg_id}`}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        See on Board Game Geek
+                      </a>
+                    ) : (
+                      "-"
+                    )}
                   </p>
                 </div>
               </div>
