@@ -213,7 +213,7 @@
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: linear-gradient(135deg, #198754 0%, #0d5c38 100%);
+  background-color: #198754;
 }
 
 .login-card {
@@ -291,7 +291,10 @@
   font-size: 1rem;
   cursor: pointer;
   text-decoration: underline;
-  transition: background-color 0.2s, color 0.2s, padding 0.2s;
+  transition:
+    background-color 0.2s,
+    color 0.2s,
+    padding 0.2s;
   border-radius: 3px;
 }
 

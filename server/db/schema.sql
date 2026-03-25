@@ -54,7 +54,7 @@ CREATE TABLE user_games (
     id SERIAL PRIMARY KEY,
     user_id INTEGER NOT NULL,
     game_id INTEGER NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     UNIQUE(user_id, game_id),
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (game_id) REFERENCES games(id) ON DELETE CASCADE
