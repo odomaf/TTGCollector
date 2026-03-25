@@ -1,5 +1,5 @@
-import React from "react";
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
+import Select from "react-select";
 
 export const AddGame = ({ onGameAdded }) => {
   const [formState, setFormState] = useState({
@@ -33,7 +33,59 @@ export const AddGame = ({ onGameAdded }) => {
   const [searchOffset, setSearchOffset] = useState(0);
   const [hasMoreResults, setHasMoreResults] = useState(false);
   const [selectedGame, setSelectedGame] = useState(null);
-  const manualAddEnabled = false;
+  const [manualAddEnabled, setManualAddEnabled] = useState(false);
+  const [noResults, setNoResults] = useState(false);
+  const [categoryOptions, setCategoryOptions] = useState([]);
+  const [mechanicOptions, setMechanicOptions] = useState([]);
+  const [selectedCategories, setSelectedCategories] = useState([]);
+  const [selectedMechanics, setSelectedMechanics] = useState([]);
+
+  const resetForm = () => {
+    setFormState({
+      gameName: "",
+      min_players: "",
+      max_players: "",
+      thumbnail: "",
+      description: "",
+      published: "",
+      bgg_id: "",
+      minplaytime: "",
+      maxplaytime: "",
+      minage: "",
+    });
+    setSearchResults([]);
+    setSearchError(null);
+    setSearchOffset(0);
+    setHasMoreResults(false);
+    setSelectedGame(null);
+    setManualAddEnabled(false);
+    setNoResults(false);
+    setSelectedCategories([]);
+    setSelectedMechanics([]);
+  };
+
+  useEffect(() => {
+    const modalEl = document.getElementById("addGameModal");
+    if (!modalEl) return;
+    modalEl.addEventListener("hidden.bs.modal", resetForm);
+    return () => modalEl.removeEventListener("hidden.bs.modal", resetForm);
+  }, []);
+
+  useEffect(() => {
+    Promise.all([
+      fetch("/api/categories").then((r) => r.json()),
+      fetch("/api/mechanics").then((r) => r.json()),
+    ])
+      .then(([cats, mechs]) => {
+        setCategoryOptions(
+          cats.map((c) => ({ value: c.category, label: c.category })),
+        );
+        setMechanicOptions(
+          mechs.map((m) => ({ value: m.mechanic, label: m.mechanic })),
+        );
+      })
+      .catch(console.error);
+  }, []);
 
   const runBGGSearch = async ({ offset = 0, append = false } = {}) => {
     setSearching(true);
@@ -63,6 +115,7 @@ export const AddGame = ({ onGameAdded }) => {
       );
       setSearchOffset(nextOffset);
       setHasMoreResults(hasMore);
+      if (!append) setNoResults(resultList.length === 0);
     } catch (error) {
       console.error("BGG search error:", error);
       setSearchError(error.message);
@@ -99,8 +152,8 @@ export const AddGame = ({ onGameAdded }) => {
           minplaytime: minplaytime ? parseInt(minplaytime, 10) : null,
           maxplaytime: maxplaytime ? parseInt(maxplaytime, 10) : null,
           minage: minage ? parseInt(minage, 10) : null,
-          categories: selectedGame?.boardgamecategory || [],
-          mechanics: selectedGame?.boardgamemechanic || [],
+          categories: selectedCategories.map((c) => c.value),
+          mechanics: selectedMechanics.map((m) => m.value),
         });
         console.log("Request body:", body);
         const response = await fetch("/api/addGame", {
@@ -180,6 +233,24 @@ export const AddGame = ({ onGameAdded }) => {
           </div>
         )}
 
+        {noResults && !manualAddEnabled && (
+          <div className="col-12">
+            <div className="alert alert-warning d-flex align-items-center gap-3 mb-0">
+              <span>
+                No results found on BoardGameGeek. Would you like to add this
+                game manually?
+              </span>
+              <button
+                type="button"
+                className="btn btn-success btn-sm ms-auto"
+                onClick={() => setManualAddEnabled(true)}
+              >
+                Yes, add manually
+              </button>
+            </div>
+          </div>
+        )}
+
         {searchResults.length > 0 && (
           <div className="col-12">
             <h6>Search results</h6>
@@ -191,6 +262,14 @@ export const AddGame = ({ onGameAdded }) => {
                   onClick={() => {
                     setSelectedGame(item);
                     setSearchResults([]);
+                    const bggCats = item.boardgamecategory || [];
+                    const bggMechs = item.boardgamemechanic || [];
+                    setSelectedCategories(
+                      categoryOptions.filter((o) => bggCats.includes(o.value)),
+                    );
+                    setSelectedMechanics(
+                      mechanicOptions.filter((o) => bggMechs.includes(o.value)),
+                    );
                     setFormState((prev) => ({
                       ...prev,
                       gameName: item.name || "",
@@ -285,88 +364,126 @@ export const AddGame = ({ onGameAdded }) => {
 
                 <div className="row g-2">
                   <div className="col-12">
-                    <p className="mb-1">{description || "-"}</p>
+                    <p className="mb-1 addgame-description">
+                      {description || "-"}
+                    </p>
                   </div>
                   <div className="col-12">
-                    <p className="mb-1">
-                      <strong>Game Type:</strong>{" "}
-                      {selectedGame?.boardgamecategory?.length
-                        ? selectedGame.boardgamecategory.join(", ")
-                        : "-"}
-                    </p>
-                    <p className="mb-0">
-                      <strong>Primary Mechanics:</strong>{" "}
-                      {selectedGame?.boardgamemechanic?.length
-                        ? selectedGame.boardgamemechanic.join(", ")
-                        : "-"}
-                    </p>
+                    <label className="form-label mb-1">
+                      <strong>Game Type</strong>
+                    </label>
+                    <Select
+                      isMulti
+                      options={categoryOptions}
+                      value={selectedCategories}
+                      onChange={setSelectedCategories}
+                      placeholder="Select categories..."
+                      classNamePrefix="react-select"
+                    />
+                  </div>
+                  <div className="col-12 mt-2">
+                    <label className="form-label mb-1">
+                      <strong>Primary Mechanics</strong>
+                    </label>
+                    <Select
+                      isMulti
+                      options={mechanicOptions}
+                      value={selectedMechanics}
+                      onChange={setSelectedMechanics}
+                      placeholder="Select mechanics..."
+                      classNamePrefix="react-select"
+                    />
                   </div>
                 </div>
+              </div>
+            </div>
+          </div>
+        )}
 
-                {manualAddEnabled && (
-                  <div className="row g-2 mt-1">
-                    <div className="col-md-4">
-                      <label className="form-label">Min Players</label>
-                      <input
-                        type="number"
-                        className="form-control"
-                        name="min_players"
-                        value={min_players}
-                        onChange={handleChange}
-                      />
-                    </div>
-                    <div className="col-md-4">
-                      <label className="form-label">Max Players</label>
-                      <input
-                        type="number"
-                        className="form-control"
-                        name="max_players"
-                        value={max_players}
-                        onChange={handleChange}
-                      />
-                    </div>
-                    <div className="col-md-4">
-                      <label className="form-label">Min Age</label>
-                      <input
-                        type="number"
-                        className="form-control"
-                        name="minage"
-                        value={minage}
-                        onChange={handleChange}
-                      />
-                    </div>
-                    <div className="col-md-6">
-                      <label className="form-label">Min Playtime</label>
-                      <input
-                        type="number"
-                        className="form-control"
-                        name="minplaytime"
-                        value={minplaytime}
-                        onChange={handleChange}
-                      />
-                    </div>
-                    <div className="col-md-6">
-                      <label className="form-label">Max Playtime</label>
-                      <input
-                        type="number"
-                        className="form-control"
-                        name="maxplaytime"
-                        value={maxplaytime}
-                        onChange={handleChange}
-                      />
-                    </div>
-                    <div className="col-12">
-                      <label className="form-label">Description</label>
-                      <textarea
-                        className="form-control"
-                        rows="4"
-                        name="description"
-                        value={description}
-                        onChange={handleChange}
-                      />
-                    </div>
-                  </div>
-                )}
+        {manualAddEnabled && (
+          <div className="col-12">
+            <div className="row g-2">
+              <div className="col-md-4">
+                <label className="form-label">Min Players</label>
+                <input
+                  type="number"
+                  className="form-control"
+                  name="min_players"
+                  value={min_players}
+                  onChange={handleChange}
+                />
+              </div>
+              <div className="col-md-4">
+                <label className="form-label">Max Players</label>
+                <input
+                  type="number"
+                  className="form-control"
+                  name="max_players"
+                  value={max_players}
+                  onChange={handleChange}
+                />
+              </div>
+              <div className="col-md-4">
+                <label className="form-label">Min Age</label>
+                <input
+                  type="number"
+                  className="form-control"
+                  name="minage"
+                  value={minage}
+                  onChange={handleChange}
+                />
+              </div>
+              <div className="col-md-6">
+                <label className="form-label">Min Playtime</label>
+                <input
+                  type="number"
+                  className="form-control"
+                  name="minplaytime"
+                  value={minplaytime}
+                  onChange={handleChange}
+                />
+              </div>
+              <div className="col-md-6">
+                <label className="form-label">Max Playtime</label>
+                <input
+                  type="number"
+                  className="form-control"
+                  name="maxplaytime"
+                  value={maxplaytime}
+                  onChange={handleChange}
+                />
+              </div>
+              <div className="col-12">
+                <label className="form-label">Description</label>
+                <textarea
+                  className="form-control"
+                  rows="4"
+                  name="description"
+                  value={description}
+                  onChange={handleChange}
+                />
+              </div>
+              <div className="col-12">
+                <label className="form-label">Game Type</label>
+                <Select
+                  isMulti
+                  options={categoryOptions}
+                  value={selectedCategories}
+                  onChange={setSelectedCategories}
+                  placeholder="Select categories..."
+                  classNamePrefix="react-select"
+                />
+              </div>
+              <div className="col-12">
+                <label className="form-label">Primary Mechanics</label>
+                <Select
+                  isMulti
+                  options={mechanicOptions}
+                  value={selectedMechanics}
+                  onChange={setSelectedMechanics}
+                  placeholder="Select mechanics..."
+                  classNamePrefix="react-select"
+                />
               </div>
             </div>
           </div>
