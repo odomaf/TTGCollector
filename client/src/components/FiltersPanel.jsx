@@ -166,7 +166,10 @@ export default function FiltersPanel({
                     aria-expanded={categoriesOpen}
                     aria-controls="categoriesFilterList"
                   >
-                    <span className="me-1 subsection-toggle-symbol" aria-hidden="true">
+                    <span
+                      className="me-1 subsection-toggle-symbol"
+                      aria-hidden="true"
+                    >
                       {categoriesOpen ? "-" : "+"}
                     </span>
                     Categories ({filters.categories.length})
@@ -222,7 +225,10 @@ export default function FiltersPanel({
                     aria-expanded={mechanicsOpen}
                     aria-controls="mechanicsFilterList"
                   >
-                    <span className="me-1 subsection-toggle-symbol" aria-hidden="true">
+                    <span
+                      className="me-1 subsection-toggle-symbol"
+                      aria-hidden="true"
+                    >
                       {mechanicsOpen ? "-" : "+"}
                     </span>
                     Mechanics ({filters.mechanics.length})
