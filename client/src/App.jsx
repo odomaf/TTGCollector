@@ -7,6 +7,19 @@ import filterGames from "./utils/filterGames";
 import Games from "./components/Games";
 import { Modal } from "./components/Modal";
 import Login from "./components/Login";
+import FiltersPanel from "./components/FiltersPanel";
+
+const getCategoryName = (value) => {
+  if (typeof value === "string") return value;
+  if (value && typeof value === "object") return value.category || "";
+  return "";
+};
+
+const getMechanicName = (value) => {
+  if (typeof value === "string") return value;
+  if (value && typeof value === "object") return value.mechanic || "";
+  return "";
+};
 
 function App() {
   const [games, setGames] = useState([]);
@@ -17,6 +30,8 @@ function App() {
     categories: [],
     mechanics: [],
   });
+  const [categoryOptions, setCategoryOptions] = useState([]);
+  const [mechanicOptions, setMechanicOptions] = useState([]);
 
   // Get authentication state from context
   // isLoading: true while checking session on app load
@@ -48,6 +63,52 @@ function App() {
       fetchGames();
     }
   }, [user]);
+
+  useEffect(() => {
+    const uniqueCategories = Array.from(
+      new Set(
+        games.flatMap((game) =>
+          (game.Categories || game.categories || [])
+            .map(getCategoryName)
+            .filter(Boolean),
+        ),
+      ),
+    ).sort((left, right) => left.localeCompare(right));
+
+    const uniqueMechanics = Array.from(
+      new Set(
+        games.flatMap((game) =>
+          (game.Mechanics || game.mechanics || [])
+            .map(getMechanicName)
+            .filter(Boolean),
+        ),
+      ),
+    ).sort((left, right) => left.localeCompare(right));
+
+    setCategoryOptions(
+      uniqueCategories.map((category) => ({
+        value: category,
+        label: category,
+      })),
+    );
+
+    setMechanicOptions(
+      uniqueMechanics.map((mechanic) => ({
+        value: mechanic,
+        label: mechanic,
+      })),
+    );
+
+    setFilters((prev) => ({
+      ...prev,
+      categories: prev.categories.filter((category) =>
+        uniqueCategories.includes(category),
+      ),
+      mechanics: prev.mechanics.filter((mechanic) =>
+        uniqueMechanics.includes(mechanic),
+      ),
+    }));
+  }, [games]);
 
   // While checking if user is logged in, show loading state
   if (isLoading) {
@@ -108,11 +169,19 @@ function App() {
             <p>Click the "Add Game" button above to get started.</p>
           </div>
         ) : (
-          <Games
-            games={filteredGames}
-            filters={filters}
-            setFilters={setFilters}
-          />
+          <>
+            <FiltersPanel
+              filters={filters}
+              setFilters={setFilters}
+              categoryOptions={categoryOptions}
+              mechanicOptions={mechanicOptions}
+            />
+            <Games
+              games={filteredGames}
+              filters={filters}
+              setFilters={setFilters}
+            />
+          </>
         )}
       </div>
       <Modal onGameAdded={fetchGames} />
