@@ -207,6 +207,33 @@
   }
 }
 
+/* ==================== GLOBAL LINK STYLES ==================== */
+/* Applied to all <a> tags site-wide */
+/* Override Bootstrap's CSS variables so they don't win the specificity war */
+:root {
+  --bs-link-color: #6b21a8;
+  --bs-link-color-rgb: 107, 33, 168;
+  --bs-link-hover-color: #6b21a8;
+  --bs-link-hover-color-rgb: 107, 33, 168;
+}
+
+a {
+  color: #6b21a8 !important;
+  text-decoration: underline;
+  transition:
+    background-color 0.2s,
+    color 0.2s,
+    padding 0.2s;
+  border-radius: 3px;
+}
+
+a:hover {
+  color: #ffffff !important;
+  background-color: #6b21a8;
+  text-decoration: none;
+  padding: 2px 6px;
+}
+
 /* ==================== LOGIN COMPONENT STYLES ==================== */
 .login-container {
   display: flex;

@@ -138,6 +138,7 @@ router.get("/", async (req, res) => {
         through: { attributes: [] }, // Don't return join table fields
         include: [Category, Mechanic],
       },
+      order: [[{ model: Game, as: "Games" }, "name", "ASC"]],
     });
 
     if (!user) {
