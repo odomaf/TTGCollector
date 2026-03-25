@@ -169,19 +169,23 @@ function App() {
             <p>Click the "Add Game" button above to get started.</p>
           </div>
         ) : (
-          <>
-            <FiltersPanel
-              filters={filters}
-              setFilters={setFilters}
-              categoryOptions={categoryOptions}
-              mechanicOptions={mechanicOptions}
-            />
-            <Games
-              games={filteredGames}
-              filters={filters}
-              setFilters={setFilters}
-            />
-          </>
+          <div className="row g-3 align-items-start app-main-layout">
+            <div className="col-12 col-lg-3">
+              <FiltersPanel
+                filters={filters}
+                setFilters={setFilters}
+                categoryOptions={categoryOptions}
+                mechanicOptions={mechanicOptions}
+              />
+            </div>
+            <div className="col-12 col-lg-9">
+              <Games
+                games={filteredGames}
+                filters={filters}
+                setFilters={setFilters}
+              />
+            </div>
+          </div>
         )}
       </div>
       <Modal onGameAdded={fetchGames} />

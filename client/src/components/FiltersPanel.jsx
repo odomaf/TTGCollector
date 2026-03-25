@@ -14,7 +14,19 @@ export default function FiltersPanel({
   categoryOptions,
   mechanicOptions,
 }) {
+  const isDesktop =
+    typeof window !== "undefined" &&
+    window.matchMedia("(min-width: 992px)").matches;
   const [isOpen, setIsOpen] = useState(false);
+
+  const activeFilterCount =
+    (filters.players ? 1 : 0) +
+    (filters.playtime ? 1 : 0) +
+    (filters.age ? 1 : 0) +
+    (filters.categories.length > 0 ? 1 : 0) +
+    (filters.mechanics.length > 0 ? 1 : 0);
+
+  const shouldShowFilters = isDesktop || isOpen;
 
   const handleNumberChange = (key) => (event) => {
     setFilters((prev) => ({
@@ -47,22 +59,35 @@ export default function FiltersPanel({
         <div className="d-flex justify-content-between align-items-center flex-wrap gap-1 mb-2">
           <div className="d-flex align-items-center gap-1 filter-panel-header">
             <h3 className="mb-0 filter-panel-title">Filter Your Games</h3>
+            {!isDesktop && (
+              <button
+                type="button"
+                className="btn btn-link btn-sm filter-panel-toggle"
+                onClick={() => setIsOpen((prev) => !prev)}
+                aria-expanded={isOpen}
+                aria-controls="gamesFilterPanel"
+                aria-label={isOpen ? "Collapse filters" : "Expand filters"}
+              >
+                <span className="filter-panel-toggle-icon" aria-hidden="true">
+                  {isOpen ? "▴" : "▾"}
+                </span>
+              </button>
+            )}
+          </div>
+
+          {!isDesktop && !isOpen && (
             <button
               type="button"
-              className="btn btn-link btn-sm filter-panel-toggle"
-              onClick={() => setIsOpen((prev) => !prev)}
-              aria-expanded={isOpen}
-              aria-controls="gamesFilterPanel"
-              aria-label={isOpen ? "Collapse filters" : "Expand filters"}
+              className="btn btn-outline-success btn-sm"
+              onClick={() => setIsOpen(true)}
             >
-              <span className="filter-panel-toggle-icon" aria-hidden="true">
-                {isOpen ? "▴" : "▾"}
-              </span>
+              Show Filters
+              {activeFilterCount > 0 ? ` (${activeFilterCount})` : ""}
             </button>
-          </div>
+          )}
         </div>
 
-        {isOpen && (
+        {shouldShowFilters && (
           <div id="gamesFilterPanel" className="row g-2">
             <div className="col-12 d-flex justify-content-start">
               <button
@@ -74,46 +99,52 @@ export default function FiltersPanel({
               </button>
             </div>
 
-            <div className="col-12 col-md-4">
-              <label htmlFor="playersFilter" className="form-label">
-                Show games playable by X players
-              </label>
-              <input
-                id="playersFilter"
-                type="number"
-                min="1"
-                className="form-control"
-                value={filters.players}
-                onChange={handleNumberChange("players")}
-              />
+            <div className="col-12">
+              <div className="d-flex align-items-center gap-2 numeric-filter-row">
+                <label htmlFor="playersFilter" className="form-label mb-0">
+                  Player Count
+                </label>
+                <input
+                  id="playersFilter"
+                  type="number"
+                  min="1"
+                  className="form-control numeric-filter-input"
+                  value={filters.players}
+                  onChange={handleNumberChange("players")}
+                />
+              </div>
             </div>
 
-            <div className="col-12 col-md-4">
-              <label htmlFor="playtimeFilter" className="form-label">
-                Show games under X minutes
-              </label>
-              <input
-                id="playtimeFilter"
-                type="number"
-                min="1"
-                className="form-control"
-                value={filters.playtime}
-                onChange={handleNumberChange("playtime")}
-              />
+            <div className="col-12">
+              <div className="d-flex align-items-center gap-2 numeric-filter-row">
+                <label htmlFor="playtimeFilter" className="form-label mb-0">
+                  Duration
+                </label>
+                <input
+                  id="playtimeFilter"
+                  type="number"
+                  min="1"
+                  className="form-control numeric-filter-input"
+                  value={filters.playtime}
+                  onChange={handleNumberChange("playtime")}
+                />
+              </div>
             </div>
 
-            <div className="col-12 col-md-4">
-              <label htmlFor="ageFilter" className="form-label">
-                Show games for age X+
-              </label>
-              <input
-                id="ageFilter"
-                type="number"
-                min="1"
-                className="form-control"
-                value={filters.age}
-                onChange={handleNumberChange("age")}
-              />
+            <div className="col-12">
+              <div className="d-flex align-items-center gap-2 numeric-filter-row">
+                <label htmlFor="ageFilter" className="form-label mb-0">
+                  Player Age
+                </label>
+                <input
+                  id="ageFilter"
+                  type="number"
+                  min="1"
+                  className="form-control numeric-filter-input"
+                  value={filters.age}
+                  onChange={handleNumberChange("age")}
+                />
+              </div>
             </div>
 
             <div className="col-12 col-lg-6">

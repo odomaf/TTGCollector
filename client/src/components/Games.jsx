@@ -15,7 +15,7 @@ export default function Games({ games }) {
       {games.length === 0 ? (
         <p>No games found.</p>
       ) : (
-        <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 games-grid">
+        <div className="row row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-lg-3 row-cols-xl-3 games-grid">
           {games.map((game) => (
             <div key={game.id} className="col mb-0">
               <div className="card game-card shadow">
