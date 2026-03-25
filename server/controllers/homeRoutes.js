@@ -75,6 +75,30 @@ router.post("/addGame", async (req, res) => {
   }
 });
 
+// GET /categories
+router.get("/categories", async (req, res) => {
+  try {
+    const categories = await Category.findAll({ order: [["category", "ASC"]] });
+    res.status(200).json(categories);
+  } catch (err) {
+    res
+      .status(500)
+      .json({ error: `Failed to retrieve categories: ${err.message}` });
+  }
+});
+
+// GET /mechanics
+router.get("/mechanics", async (req, res) => {
+  try {
+    const mechanics = await Mechanic.findAll({ order: [["mechanic", "ASC"]] });
+    res.status(200).json(mechanics);
+  } catch (err) {
+    res
+      .status(500)
+      .json({ error: `Failed to retrieve mechanics: ${err.message}` });
+  }
+});
+
 // GET /getGames
 router.get("/", async (req, res) => {
   try {
