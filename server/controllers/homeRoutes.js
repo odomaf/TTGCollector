@@ -1,7 +1,7 @@
 const router = require("express").Router();
 const { Op } = require("sequelize");
 const sequelize = require("../config/connection");
-const { Game, Category, Mechanic } = require("../models");
+const { Game, Category, Mechanic, User, UserGame } = require("../models");
 
 // POST /addGame
 router.post("/addGame", async (req, res) => {
@@ -60,6 +60,24 @@ router.post("/addGame", async (req, res) => {
       }
     }
 
+    // Associate the game with the current user
+    // Check if user is logged in (session has userId)
+    if (req.session.userId) {
+      // Create a record in user_games table to attach the game to the user
+      await UserGame.create(
+        {
+          user_id: req.session.userId,
+          game_id: newGame.id,
+        },
+        { transaction },
+      );
+      console.log(`Game associated with user ${req.session.userId}`);
+    } else {
+      // If no user session, rollback the transaction
+      await transaction.rollback();
+      return res.status(401).json({ error: "User not authenticated" });
+    }
+
     const createdGame = await Game.findByPk(newGame.id, {
       include: [Category, Mechanic],
       transaction,
@@ -100,12 +118,34 @@ router.get("/mechanics", async (req, res) => {
 });
 
 // GET /getGames
+// Returns only games associated with the logged-in user
+// Uses the user_games join table to filter by user
 router.get("/", async (req, res) => {
   try {
-    console.log("GET / called - fetching all games");
-    const games = await Game.findAll();
-    console.log("Games found:", games);
-    console.log("Number of games:", games.length);
+    // Check if user is logged in (session has userId)
+    if (!req.session.userId) {
+      return res.status(401).json({ error: "User not authenticated" });
+    }
+
+    console.log("GET / called - fetching games for user:", req.session.userId);
+
+    // Find the user with their associated games
+    // Include the Game model through the UserGame join table
+    const user = await User.findByPk(req.session.userId, {
+      include: {
+        model: Game,
+        through: { attributes: [] }, // Don't return join table fields
+        include: [Category, Mechanic],
+      },
+    });
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // user.Games is an array of games associated with this user
+    const games = user.Games || [];
+    console.log("Games found for user:", games.length);
     res.status(200).json(games);
   } catch (err) {
     console.error("Error fetching games:", err);

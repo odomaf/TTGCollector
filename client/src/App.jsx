@@ -1,12 +1,20 @@
 import React, { useState, useEffect } from "react";
 import "./App.css";
+import { useAuth } from "./context/AuthContext";
 
-//components
+// Components
 import Games from "./components/Games";
 import { Modal } from "./components/Modal";
+import Login from "./components/Login";
 
 function App() {
   const [games, setGames] = useState([]);
+
+  // Get authentication state from context
+  // isLoading: true while checking session on app load
+  // user: the logged-in user object (null if not logged in)
+  // logout: function to logout the user
+  const { isLoading, user, logout } = useAuth();
 
   const fetchGames = async () => {
     try {
@@ -22,14 +30,49 @@ function App() {
   };
 
   useEffect(() => {
-    fetchGames();
-  }, []);
+    // Only fetch games if user is logged in
+    if (user) {
+      fetchGames();
+    }
+  }, [user]);
 
+  // While checking if user is logged in, show loading state
+  if (isLoading) {
+    return (
+      <div className="App">
+        <div
+          className="container d-flex justify-content-center align-items-center"
+          style={{ minHeight: "100vh" }}
+        >
+          <div className="spinner-border" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // If not logged in, show login page
+  if (!user) {
+    return <Login />;
+  }
+
+  // If logged in, show the main app
   return (
     <div className="App">
       <div className="container text-white p-3 mb-3">
-        <div className="bg-success text-white p-3 mb-3 rounded">
-          <h1>Table Top Games</h1>
+        <div className="bg-success text-white p-3 mb-3 rounded d-flex justify-content-between align-items-center">
+          <h1 className="mb-0">Table Top Games</h1>
+          <div className="d-flex align-items-center gap-3">
+            <span className="user-info">Welcome, {user.username}!</span>
+            <button
+              type="button"
+              className="btn btn-outline-light btn-sm"
+              onClick={logout}
+            >
+              Logout
+            </button>
+          </div>
         </div>
         <div className="text-success mb-3 rounded d-flex align-items-center gap-3 flex-wrap">
           <h2 className="mb-0">What's in your collection?</h2>
@@ -44,7 +87,14 @@ function App() {
         </div>
       </div>
       <div className="container">
-        <Games games={games} />
+        {games.length === 0 ? (
+          <div className="alert alert-info text-center" role="alert">
+            <h4>Your collection is empty!</h4>
+            <p>Click the "Add Game" button above to get started.</p>
+          </div>
+        ) : (
+          <Games games={games} />
+        )}
       </div>
       <Modal onGameAdded={fetchGames} />
     </div>
