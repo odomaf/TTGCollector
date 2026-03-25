@@ -42,32 +42,38 @@ export default function FiltersPanel({
   };
 
   return (
-    <div className="card mb-3 shadow-sm">
+    <div className="card mb-2 shadow-sm filter-panel">
       <div className="card-body">
-        <div className="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
-          <h3 className="h5 mb-0">Filters</h3>
-          <div className="d-flex gap-2">
+        <div className="d-flex justify-content-between align-items-center flex-wrap gap-1 mb-2">
+          <div className="d-flex align-items-center gap-1 filter-panel-header">
+            <h3 className="mb-0 filter-panel-title">Filter Your Games</h3>
             <button
               type="button"
-              className="btn btn-outline-success btn-sm"
+              className="btn btn-link btn-sm filter-panel-toggle"
               onClick={() => setIsOpen((prev) => !prev)}
               aria-expanded={isOpen}
               aria-controls="gamesFilterPanel"
+              aria-label={isOpen ? "Collapse filters" : "Expand filters"}
             >
-              {isOpen ? "Hide filters" : "Show filters"}
-            </button>
-            <button
-              type="button"
-              className="btn btn-outline-secondary btn-sm"
-              onClick={clearFilters}
-            >
-              Clear filters
+              <span className="filter-panel-toggle-icon" aria-hidden="true">
+                {isOpen ? "▴" : "▾"}
+              </span>
             </button>
           </div>
         </div>
 
         {isOpen && (
-          <div id="gamesFilterPanel" className="row g-3">
+          <div id="gamesFilterPanel" className="row g-2">
+            <div className="col-12 d-flex justify-content-start">
+              <button
+                type="button"
+                className="btn btn-outline-secondary btn-sm"
+                onClick={clearFilters}
+              >
+                Clear filters
+              </button>
+            </div>
+
             <div className="col-12 col-md-4">
               <label htmlFor="playersFilter" className="form-label">
                 Show games playable by X players
@@ -111,7 +117,7 @@ export default function FiltersPanel({
             </div>
 
             <div className="col-12 col-lg-6">
-              <fieldset className="border rounded p-3 h-100">
+              <fieldset className="border rounded p-2 h-100">
                 <legend className="float-none w-auto px-2 fs-6 mb-2">
                   Categories
                 </legend>
@@ -141,7 +147,7 @@ export default function FiltersPanel({
             </div>
 
             <div className="col-12 col-lg-6">
-              <fieldset className="border rounded p-3 h-100">
+              <fieldset className="border rounded p-2 h-100">
                 <legend className="float-none w-auto px-2 fs-6 mb-2">
                   Mechanics
                 </legend>

@@ -41,6 +41,68 @@
   margin-bottom: 0;
 }
 
+.filter-panel {
+  border: 2px dashed #198754;
+  color: #0d5c38;
+}
+
+.filter-panel .card-body {
+  background-color: #f0faf5;
+  color: inherit;
+  padding: 0.5rem 0.75rem;
+}
+
+.filter-panel h3,
+.filter-panel legend,
+.filter-panel .form-label,
+.filter-panel .form-check-label {
+  color: #198754;
+}
+
+.filter-panel-header {
+  gap: 0.25rem;
+}
+
+.filter-panel-title {
+  font-size: 1.4rem;
+  font-weight: 600;
+  line-height: 1.1;
+}
+
+.filter-panel-toggle {
+  --bs-btn-color: #198754;
+  --bs-btn-hover-color: #0d5c38;
+  --bs-btn-active-color: #0d5c38;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  line-height: 1;
+  text-decoration: none;
+  border-radius: 999px;
+  color: #198754 !important;
+  background-color: transparent;
+}
+
+.filter-panel-toggle-icon {
+  display: block;
+  font-size: 2.25rem;
+  line-height: 0.75;
+}
+
+.filter-panel {
+  margin-bottom: 1rem !important;
+}
+
+.filter-panel-toggle:hover,
+.filter-panel-toggle:focus {
+  color: #0d5c38 !important;
+  background-color: rgba(25, 135, 84, 0.1);
+  text-decoration: none;
+}
+
 .hero {
   position: relative;
 
