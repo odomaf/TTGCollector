@@ -131,10 +131,10 @@ router.get("/", async (req, res) => {
     console.log("GET / userId from session:", req.session.userId);
 
     // Find the user with their associated games
-    // Include the Game model through the UserGame join table using the "Games" alias
+    // Use the "Games" alias defined in the association (models/index.js)
     const user = await User.findByPk(req.session.userId, {
       include: {
-        association: "Games", // Use the alias we defined in the association
+        association: "Games",
         through: { attributes: [] }, // Don't return join table fields
         include: [Category, Mechanic],
       },
