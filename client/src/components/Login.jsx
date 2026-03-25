@@ -199,7 +199,7 @@ export default function Login() {
               <p>Don't have an account?</p>
               <button
                 type="button"
-                className="btn btn-link"
+                className="toggle-link"
                 onClick={() => {
                   setMode("signup");
                   setError("");
@@ -213,7 +213,7 @@ export default function Login() {
               <p>Already have an account?</p>
               <button
                 type="button"
-                className="btn btn-link"
+                className="toggle-link"
                 onClick={() => {
                   setMode("login");
                   setError("");

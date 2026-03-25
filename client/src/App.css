@@ -267,15 +267,39 @@
 }
 
 .btn-link {
-  color: #198754;
+  --bs-btn-color: #0c6478;
+  --bs-btn-hover-color: #094f5f;
+  --bs-btn-active-color: #094f5f;
+  color: #0c6478;
   font-weight: 600;
   padding: 0;
   text-decoration: none;
 }
 
 .btn-link:hover {
-  color: #0d5c38;
+  color: #094f5f;
   text-decoration: underline;
+}
+
+/* Custom link-style button for login/signup toggle (bypasses Bootstrap btn-link color) */
+.toggle-link {
+  background: none;
+  border: none;
+  padding: 0;
+  color: #6b21a8;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  text-decoration: underline;
+  transition: background-color 0.2s, color 0.2s, padding 0.2s;
+  border-radius: 3px;
+}
+
+.toggle-link:hover {
+  color: #ffffff;
+  background-color: #6b21a8;
+  text-decoration: none;
+  padding: 2px 6px;
 }
 
 .login-toggle {
