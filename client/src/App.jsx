@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./App.css";
 import { useAuth } from "./context/AuthContext";
+import filterGames from "./utils/filterGames";
 
 // Components
 import Games from "./components/Games";
@@ -9,6 +10,13 @@ import Login from "./components/Login";
 
 function App() {
   const [games, setGames] = useState([]);
+  const [filters, setFilters] = useState({
+    players: "",
+    playtime: "",
+    age: "",
+    categories: [],
+    mechanics: [],
+  });
 
   // Get authentication state from context
   // isLoading: true while checking session on app load
@@ -63,6 +71,8 @@ function App() {
   }
 
   // If logged in, show the main app
+  const filteredGames = filterGames(games, filters);
+
   return (
     <div className="App">
       <div className="container text-white p-3 mb-3">
@@ -98,7 +108,11 @@ function App() {
             <p>Click the "Add Game" button above to get started.</p>
           </div>
         ) : (
-          <Games games={games} />
+          <Games
+            games={filteredGames}
+            filters={filters}
+            setFilters={setFilters}
+          />
         )}
       </div>
       <Modal onGameAdded={fetchGames} />
