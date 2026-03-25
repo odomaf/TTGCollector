@@ -127,13 +127,14 @@ router.get("/", async (req, res) => {
       return res.status(401).json({ error: "User not authenticated" });
     }
 
-    console.log("GET / called - fetching games for user:", req.session.userId);
+    console.log("GET / called, session ID:", req.sessionID);
+    console.log("GET / userId from session:", req.session.userId);
 
     // Find the user with their associated games
-    // Include the Game model through the UserGame join table
+    // Include the Game model through the UserGame join table using the "Games" alias
     const user = await User.findByPk(req.session.userId, {
       include: {
-        model: Game,
+        association: "Games", // Use the alias we defined in the association
         through: { attributes: [] }, // Don't return join table fields
         include: [Category, Mechanic],
       },
@@ -143,9 +144,12 @@ router.get("/", async (req, res) => {
       return res.status(404).json({ error: "User not found" });
     }
 
+    console.log("User found:", user.username, user.id);
+    console.log("Raw user.Games:", user.Games);
+
     // user.Games is an array of games associated with this user
     const games = user.Games || [];
-    console.log("Games found for user:", games.length);
+    console.log(`Games found for user ${req.session.userId}: ${games.length}`);
     res.status(200).json(games);
   } catch (err) {
     console.error("Error fetching games:", err);

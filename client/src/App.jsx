@@ -19,6 +19,11 @@ function App() {
   const fetchGames = async () => {
     try {
       const response = await fetch("/api/");
+      if (response.status === 401) {
+        // Session expired or not found — log out so the user can re-authenticate
+        logout();
+        return;
+      }
       if (!response.ok) {
         throw new Error(`API error: ${response.status}`);
       }

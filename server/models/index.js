@@ -50,10 +50,10 @@ Mechanic.belongsToMany(Game, {
 
 // Users can have multiple games in their collection
 User.belongsToMany(Game, {
-  through: "user_games", // The join table that connects users to games
+  through: "user_games", // Use the table name directly
   foreignKey: "user_id", // Column in user_games that references users
   otherKey: "game_id", // Column in user_games that references games
-  timestamps: true, // Track when the game was added to the collection (created_at)
+  as: "Games", // Alias for the association (user.Games)
 });
 
 // Reverse: Games can belong to multiple users' collections
@@ -61,7 +61,7 @@ Game.belongsToMany(User, {
   through: "user_games",
   foreignKey: "game_id",
   otherKey: "user_id",
-  timestamps: true,
+  as: "Users", // Alias for the association (game.Users)
 });
 
 module.exports = { Game, Category, Mechanic, User, UserGame };

@@ -28,8 +28,13 @@ router.post("/signup", async (req, res) => {
     });
 
     // Save user ID to session for automatic login after signup
+    // Await the save so the session is persisted before the response is sent;
+    // without this, the client's immediate fetchGames() call would hit a 401
+    // because the session wouldn't be in the database yet.
     req.session.userId = user.id;
-    req.session.save();
+    await new Promise((resolve, reject) => {
+      req.session.save((err) => (err ? reject(err) : resolve()));
+    });
 
     // Return success response (don't send password back to client)
     res.status(201).json({
@@ -107,9 +112,13 @@ router.post("/login", async (req, res) => {
     }
 
     // Password is correct! Save user ID to session
-    // This creates a session cookie that identifies the user for future requests
+    // Await the save so the session is persisted before the response is sent;
+    // without this, the client's immediate fetchGames() call would hit a 401
+    // because the session wouldn't be in the database yet.
     req.session.userId = user.id;
-    req.session.save();
+    await new Promise((resolve, reject) => {
+      req.session.save((err) => (err ? reject(err) : resolve()));
+    });
 
     // Return success response
     res.status(200).json({
