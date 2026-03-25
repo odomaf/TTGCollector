@@ -121,7 +121,7 @@ export default function Login() {
 
             <button
               type="submit"
-              className="btn btn-primary w-100"
+              className="btn btn-success w-100"
               disabled={isLoading}
             >
               {isLoading ? "Logging in..." : "Login"}
@@ -184,7 +184,7 @@ export default function Login() {
 
             <button
               type="submit"
-              className="btn btn-primary w-100"
+              className="btn btn-success w-100"
               disabled={isLoading}
             >
               {isLoading ? "Signing up..." : "Sign Up"}

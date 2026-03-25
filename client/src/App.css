@@ -22,6 +22,25 @@
   font-weight: 500;
 }
 
+.empty-collection-message {
+  margin-top: 3rem;
+  padding: 2rem;
+  border: 2px dashed #198754;
+  border-radius: 10px;
+  color: #0d5c38;
+  background-color: #f0faf5;
+}
+
+.empty-collection-message h4 {
+  font-weight: 600;
+  color: #198754;
+}
+
+.empty-collection-message p {
+  color: #2d7a57;
+  margin-bottom: 0;
+}
+
 .hero {
   position: relative;
 
@@ -188,23 +207,13 @@
   }
 }
 
-/* Override default button color to success */
-.btn-primary {
-  --bs-btn-bg: var(--bs-success);
-  --bs-btn-border-color: var(--bs-success);
-  --bs-btn-hover-bg: var(--bs-success-darker, #218838);
-  --bs-btn-hover-border-color: var(--bs-success-darker, #218838);
-  --bs-btn-active-bg: var(--bs-success-darker, #218838);
-  --bs-btn-active-border-color: var(--bs-success-darker, #218838);
-}
-
 /* ==================== LOGIN COMPONENT STYLES ==================== */
 .login-container {
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #198754 0%, #0d5c38 100%);
 }
 
 .login-card {
@@ -245,11 +254,12 @@
 
 .form-group input:focus {
   outline: none;
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  border-color: #198754;
+  box-shadow: 0 0 0 3px rgba(25, 135, 84, 0.15);
 }
 
-.btn {
+/* Scoped to login-card so it doesn't affect modal close buttons */
+.login-card .btn {
   margin-top: 0.5rem;
   font-weight: 600;
   padding: 0.75rem;
@@ -257,14 +267,14 @@
 }
 
 .btn-link {
-  color: #667eea;
+  color: #198754;
   font-weight: 600;
   padding: 0;
   text-decoration: none;
 }
 
 .btn-link:hover {
-  color: #5568d3;
+  color: #0d5c38;
   text-decoration: underline;
 }
 

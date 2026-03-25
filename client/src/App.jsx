@@ -88,7 +88,7 @@ function App() {
       </div>
       <div className="container">
         {games.length === 0 ? (
-          <div className="alert alert-info text-center" role="alert">
+          <div className="empty-collection-message text-center" role="alert">
             <h4>Your collection is empty!</h4>
             <p>Click the "Add Game" button above to get started.</p>
           </div>
