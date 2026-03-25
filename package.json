@@ -8,24 +8,9 @@
     "dev": "concurrently \"cd server && npm run watch\" \"cd client && npm run dev\"",
     "install": "cd server && npm i && cd ../client && npm i",
     "seed": "cd server && npm run seed",
-    "build": "cd client && npm run build",
-    "commit": "git-cz",
-    "prepare": "husky"
+    "build": "cd client && npm run build"
   },
   "dependencies": {
     "bootstrap": "^5.3.8"
-  },
-  "devDependencies": {
-    "@commitlint/cli": "^20.5.0",
-    "@commitlint/config-conventional": "^20.5.0",
-    "commitizen": "^4.3.1",
-    "cz-conventional-changelog": "^3.3.0",
-    "cz-customizable": "^7.5.1",
-    "husky": "^9.1.7"
-  },
-  "config": {
-    "commitizen": {
-      "path": "cz-conventional-changelog"
-    }
   }
 }
