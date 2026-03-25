@@ -133,6 +133,44 @@
   -moz-appearance: textfield;
 }
 
+.filter-subsection {
+  background-color: rgba(25, 135, 84, 0.14);
+}
+
+.filter-subsection-toggle {
+  color: #198754 !important;
+  text-decoration: none !important;
+  font-weight: 600;
+}
+
+.filter-subsection-toggle:hover,
+.filter-subsection-toggle:focus {
+  color: #0d5c38 !important;
+  text-decoration: none !important;
+}
+
+.subsection-toggle-symbol {
+  display: inline-block;
+  min-width: 0.8rem;
+  font-size: 1.15rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.filter-options-scroll {
+  max-height: 220px;
+  overflow-y: auto;
+  padding-right: 0.25rem;
+  border-top: 1px solid rgba(25, 135, 84, 0.2);
+  padding-top: 0.35rem;
+}
+
+.filter-option-label {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
 .app-main-layout {
   margin-bottom: 1rem;
 }

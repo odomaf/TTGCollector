@@ -18,6 +18,8 @@ export default function FiltersPanel({
     typeof window !== "undefined" &&
     window.matchMedia("(min-width: 992px)").matches;
   const [isOpen, setIsOpen] = useState(false);
+  const [categoriesOpen, setCategoriesOpen] = useState(false);
+  const [mechanicsOpen, setMechanicsOpen] = useState(false);
 
   const activeFilterCount =
     (filters.players ? 1 : 0) +
@@ -51,6 +53,13 @@ export default function FiltersPanel({
 
   const clearFilters = () => {
     setFilters(DEFAULT_FILTERS);
+  };
+
+  const clearSingleFilter = (key) => {
+    setFilters((prev) => ({
+      ...prev,
+      [key]: [],
+    }));
   };
 
   return (
@@ -147,64 +156,116 @@ export default function FiltersPanel({
               </div>
             </div>
 
-            <div className="col-12 col-lg-6">
-              <fieldset className="border rounded p-2 h-100">
-                <legend className="float-none w-auto px-2 fs-6 mb-2">
-                  Categories
-                </legend>
-                <div style={{ maxHeight: "220px", overflowY: "auto" }}>
-                  {categoryOptions.map((category) => (
-                    <div className="form-check" key={category.value}>
-                      <input
-                        className="form-check-input"
-                        type="checkbox"
-                        id={`category-${category.value}`}
-                        checked={filters.categories.includes(category.value)}
-                        onChange={handleToggleListValue(
-                          "categories",
-                          category.value,
-                        )}
-                      />
-                      <label
-                        className="form-check-label"
-                        htmlFor={`category-${category.value}`}
-                      >
-                        {category.label}
-                      </label>
-                    </div>
-                  ))}
+            <div className="col-12">
+              <div className="filter-subsection border rounded p-2">
+                <div className="d-flex align-items-center justify-content-between gap-2 mb-1">
+                  <button
+                    type="button"
+                    className="btn btn-link p-0 filter-subsection-toggle"
+                    onClick={() => setCategoriesOpen((prev) => !prev)}
+                    aria-expanded={categoriesOpen}
+                    aria-controls="categoriesFilterList"
+                  >
+                    <span className="me-1 subsection-toggle-symbol" aria-hidden="true">
+                      {categoriesOpen ? "-" : "+"}
+                    </span>
+                    Categories ({filters.categories.length})
+                  </button>
+                  {filters.categories.length > 0 && (
+                    <button
+                      type="button"
+                      className="btn btn-outline-secondary btn-sm"
+                      onClick={() => clearSingleFilter("categories")}
+                    >
+                      Clear
+                    </button>
+                  )}
                 </div>
-              </fieldset>
+
+                {categoriesOpen && (
+                  <div
+                    id="categoriesFilterList"
+                    className="filter-options-scroll"
+                  >
+                    {categoryOptions.map((category) => (
+                      <div className="form-check" key={category.value}>
+                        <input
+                          className="form-check-input"
+                          type="checkbox"
+                          id={`category-${category.value}`}
+                          checked={filters.categories.includes(category.value)}
+                          onChange={handleToggleListValue(
+                            "categories",
+                            category.value,
+                          )}
+                        />
+                        <label
+                          className="form-check-label filter-option-label"
+                          htmlFor={`category-${category.value}`}
+                        >
+                          {category.label}
+                        </label>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
 
-            <div className="col-12 col-lg-6">
-              <fieldset className="border rounded p-2 h-100">
-                <legend className="float-none w-auto px-2 fs-6 mb-2">
-                  Mechanics
-                </legend>
-                <div style={{ maxHeight: "220px", overflowY: "auto" }}>
-                  {mechanicOptions.map((mechanic) => (
-                    <div className="form-check" key={mechanic.value}>
-                      <input
-                        className="form-check-input"
-                        type="checkbox"
-                        id={`mechanic-${mechanic.value}`}
-                        checked={filters.mechanics.includes(mechanic.value)}
-                        onChange={handleToggleListValue(
-                          "mechanics",
-                          mechanic.value,
-                        )}
-                      />
-                      <label
-                        className="form-check-label"
-                        htmlFor={`mechanic-${mechanic.value}`}
-                      >
-                        {mechanic.label}
-                      </label>
-                    </div>
-                  ))}
+            <div className="col-12">
+              <div className="filter-subsection border rounded p-2">
+                <div className="d-flex align-items-center justify-content-between gap-2 mb-1">
+                  <button
+                    type="button"
+                    className="btn btn-link p-0 filter-subsection-toggle"
+                    onClick={() => setMechanicsOpen((prev) => !prev)}
+                    aria-expanded={mechanicsOpen}
+                    aria-controls="mechanicsFilterList"
+                  >
+                    <span className="me-1 subsection-toggle-symbol" aria-hidden="true">
+                      {mechanicsOpen ? "-" : "+"}
+                    </span>
+                    Mechanics ({filters.mechanics.length})
+                  </button>
+                  {filters.mechanics.length > 0 && (
+                    <button
+                      type="button"
+                      className="btn btn-outline-secondary btn-sm"
+                      onClick={() => clearSingleFilter("mechanics")}
+                    >
+                      Clear
+                    </button>
+                  )}
                 </div>
-              </fieldset>
+
+                {mechanicsOpen && (
+                  <div
+                    id="mechanicsFilterList"
+                    className="filter-options-scroll"
+                  >
+                    {mechanicOptions.map((mechanic) => (
+                      <div className="form-check" key={mechanic.value}>
+                        <input
+                          className="form-check-input"
+                          type="checkbox"
+                          id={`mechanic-${mechanic.value}`}
+                          checked={filters.mechanics.includes(mechanic.value)}
+                          onChange={handleToggleListValue(
+                            "mechanics",
+                            mechanic.value,
+                          )}
+                        />
+                        <label
+                          className="form-check-label filter-option-label"
+                          htmlFor={`mechanic-${mechanic.value}`}
+                        >
+                          {mechanic.label}
+                        </label>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         )}
