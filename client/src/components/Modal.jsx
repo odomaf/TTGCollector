@@ -2,6 +2,8 @@ import React from "react";
 import { AddGame } from "./AddGame";
 
 export const Modal = ({ onGameAdded }) => {
+  const [canSubmit, setCanSubmit] = React.useState(false);
+
   return (
     <div
       className="modal fade"
@@ -24,13 +26,14 @@ export const Modal = ({ onGameAdded }) => {
             ></button>
           </div>
           <div className="modal-body">
-            <AddGame onGameAdded={onGameAdded} />
+            <AddGame onGameAdded={onGameAdded} setCanSubmit={setCanSubmit} />
           </div>
           <div className="modal-footer">
             <button
               type="submit"
               className="btn btn-success"
               form="addGameForm"
+              disabled={!canSubmit}
             >
               Add Game
             </button>

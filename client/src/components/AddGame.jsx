@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Select from "react-select";
 
-export const AddGame = ({ onGameAdded }) => {
+export const AddGame = ({ onGameAdded, setCanSubmit }) => {
   const [formState, setFormState] = useState({
     gameName: "",
     min_players: "",
@@ -30,6 +30,7 @@ export const AddGame = ({ onGameAdded }) => {
   const [searchResults, setSearchResults] = useState([]);
   const [searching, setSearching] = useState(false);
   const [searchError, setSearchError] = useState(null);
+  const [submitError, setSubmitError] = useState(null);
   const [searchOffset, setSearchOffset] = useState(0);
   const [hasMoreResults, setHasMoreResults] = useState(false);
   const [selectedGame, setSelectedGame] = useState(null);
@@ -55,6 +56,7 @@ export const AddGame = ({ onGameAdded }) => {
     });
     setSearchResults([]);
     setSearchError(null);
+    setSubmitError(null);
     setSearchOffset(0);
     setHasMoreResults(false);
     setSelectedGame(null);
@@ -64,12 +66,22 @@ export const AddGame = ({ onGameAdded }) => {
     setSelectedMechanics([]);
   };
 
+  const canSubmit =
+    gameName.trim().length > 0 &&
+    (Boolean(selectedGame) || manualAddEnabled);
+
   useEffect(() => {
     const modalEl = document.getElementById("addGameModal");
     if (!modalEl) return;
     modalEl.addEventListener("hidden.bs.modal", resetForm);
     return () => modalEl.removeEventListener("hidden.bs.modal", resetForm);
   }, []);
+
+  useEffect(() => {
+    if (typeof setCanSubmit === "function") {
+      setCanSubmit(canSubmit);
+    }
+  }, [canSubmit, setCanSubmit]);
 
   useEffect(() => {
     Promise.all([
@@ -135,6 +147,7 @@ export const AddGame = ({ onGameAdded }) => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setSubmitError(null);
     console.log("Form state on submit:", formState);
     if (!gameName) {
       console.error("Game name is required");
@@ -161,6 +174,19 @@ export const AddGame = ({ onGameAdded }) => {
           headers: { "Content-Type": "application/json" },
           body: body,
         });
+        if (!response.ok) {
+          let message = `Failed to add game (${response.status})`;
+          try {
+            const errorPayload = await response.json();
+            if (errorPayload?.error) {
+              message = errorPayload.error;
+            }
+          } catch (_err) {
+            // Keep fallback message when response is not JSON.
+          }
+          setSubmitError(message);
+          return;
+        }
         if (response.ok) {
           // Close modal
           document.querySelector("#addGameModal .btn-close").click();
@@ -186,6 +212,7 @@ export const AddGame = ({ onGameAdded }) => {
         console.log("Game added:", response);
       } catch (error) {
         console.error("Error adding game:", error);
+        setSubmitError("Unable to add game right now. Please try again.");
       }
     }
   };
@@ -230,6 +257,12 @@ export const AddGame = ({ onGameAdded }) => {
         {searchError && (
           <div className="col-12">
             <div className="alert alert-danger">{searchError}</div>
+          </div>
+        )}
+
+        {submitError && (
+          <div className="col-12">
+            <div className="alert alert-danger mb-0">{submitError}</div>
           </div>
         )}
 
